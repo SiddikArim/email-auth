@@ -1,21 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import google from '../../assets/Icon-Google.png'
-import { GoogleAuthProvider, getAuth, signInWithPopup   } from "firebase/auth";
+import git from '../../assets/icon-git.png'
+import { GithubAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import app from '../Fire/Firebase.config';
 
 const Login = () => {
+    const [userData, setUserData] = useState({})
     const auth = getAuth(app)
     const googleProvider = new GoogleAuthProvider();
-    const handleGoogleLogin = () =>{
+    const githubProvider = new GithubAuthProvider()
+    const handleGoogleLogin = () => {
         signInWithPopup(auth, googleProvider)
-        .then((result)=>{
-            const user = result.user
-            console.log('user vore deoa success', user)
-        })
-        .catch((error)=>{
-            console.log(error.message)
-        })
-    }
+            .then((result) => {
+                const user = result.user
+                setUserData(user)
+                console.log('user vore deoa success', user)
+            })
+            .catch((error) => {
+                console.log(error.message)
+            })
+    };
+    const handleGithubLogin = () => {
+        signInWithPopup(auth, githubProvider)
+            .then(result => {
+                // This gives you a GitHub Access Token. You can use it to access the GitHub API
+                const user = result.user
+                setUserData(user)
+                console.log('user set success', user)
+            })
+            .catch(error => {
+                console.log(error.message)
+            })
+    };
+
     return (
         <div className='flex items-center justify-center mt-10'>
             <div className="bg-white p-8 rounded shadow-md w-96">
@@ -33,13 +50,18 @@ const Login = () => {
                     </div>
 
                     <button type="submit" className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600">Login</button>
-            <div className='w-10 h-10 mt-3' >
-                <img onClick={handleGoogleLogin} src={google} alt="" />
-            </div>
+                    <div className='flex items-center justify-center gap-5'>
+                        <div className='w-10 h-10 mt-3' >
+                            <img onClick={handleGoogleLogin} src={google} alt="" />
+                        </div>
+                        <div className='w-10 h-10 mt-3' >
+                            <img onClick={handleGithubLogin} src={git} alt="" />
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
     );
-};
+}
 
 export default Login;
